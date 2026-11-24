@@ -99,9 +99,9 @@ video_aspect_ratios_list = [
 ]
 
 aspect_ratios_list = [
-    "1:1 (1024x1024 Square)", 
-    "16:9 (1280x720 Landscape)", 
-    "9:16 (720x1280 Vertical/Reel)", 
+    "1:1 (1024x1024 Square)",
+    "16:9 (1280x720 Landscape)",
+    "9:16 (720x1280 Vertical/Reel)",
     "4:3 (1024x768 Standard)",
     "3:4 (768x1024 Portrait)",
     "21:9 (1536x640 Cinematic Ultrawide)",
@@ -112,6 +112,35 @@ aspect_ratios_list = [
     "4:5 (1024x1280 Instagram)",
     "2:1 (1536x768 Wide)"
 ]
+
+aspect_ratio_dimensions_map = {
+    "1:1 (1024x1024 Square)": (1024, 1024),
+    "16:9 (1280x720 Landscape)": (1280, 720),
+    "9:16 (720x1280 Vertical/Reel)": (720, 1280),
+    "4:3 (1024x768 Standard)": (1024, 768),
+    "3:4 (768x1024 Portrait)": (768, 1024),
+    "21:9 (1536x640 Cinematic Ultrawide)": (1536, 640),
+    "9:21 (640x1536 Tall Vertical)": (640, 1536),
+    "3:2 (1200x800 Classic Photo)": (1200, 800),
+    "2:3 (800x1200 Photo Portrait)": (800, 1200),
+    "5:4 (1280x1024 Monitor)": (1280, 1024),
+    "4:5 (1024x1280 Instagram)": (1024, 1280),
+    "2:1 (1536x768 Wide)": (1536, 768),
+}
+
+art_style_suffix_map = {
+    "None": "",
+    "Photorealistic": "photorealistic, ultra detailed photography, natural lighting, 8k",
+    "Cinematic": "cinematic film still, dramatic lighting, anamorphic lens, 8k",
+    "Oil Painting": "rich oil painting on canvas, visible brush strokes, fine art",
+    "Anime": "high quality anime illustration, vibrant colors, crisp linework",
+    "Cyberpunk": "cyberpunk futuristic neon aesthetic, moody sci-fi lighting, 8k",
+    "3D Render": "3d render, octane render, unreal engine 5, studio lighting"
+}
+
+def update_dimensions_from_preset(selected_ratio):
+    w, h = aspect_ratio_dimensions_map.get(selected_ratio, (1024, 1024))
+    return w, h
 
 def mock_transcribe(audio_file):
     if not audio_file:
@@ -130,73 +159,106 @@ def auto_composite_storyboard_grid(img1, img2, img3, img4, img5, img6):
     images = [img for img in [img1, img2, img3, img4, img5, img6] if img is not None]
     if not images:
         return None
-    
+
     target_size = (384, 384)
     resized_imgs = [img.convert("RGB").resize(target_size) for img in images]
-    
+
     cols = min(len(resized_imgs), 3)
     rows = (len(resized_imgs) + cols - 1) // cols
-    
+
     grid_w = cols * target_size[0]
     grid_h = rows * target_size[1]
-    
+
     grid_image = Image.new("RGB", (grid_w, grid_h), (15, 23, 42))
     for idx, img in enumerate(resized_imgs):
         r = idx // cols
         c = idx % cols
         grid_image.paste(img, (c * target_size[0], r * target_size[1]))
-        
+
     return grid_image
 
 def auto_composite_dynamic_grid(img1, img2, img3):
     images = [img for img in [img1, img2, img3] if img is not None]
     if not images:
         return None
-    
+
     target_size = (512, 512)
     resized_imgs = [img.convert("RGB").resize(target_size) for img in images]
-    
+
     cols = min(len(resized_imgs), 3)
     rows = (len(resized_imgs) + cols - 1) // cols
-    
+
     grid_w = cols * target_size[0]
     grid_h = rows * target_size[1]
-    
+
     grid_image = Image.new("RGB", (grid_w, grid_h), (15, 23, 42))
     for idx, img in enumerate(resized_imgs):
         r = idx // cols
         c = idx % cols
         grid_image.paste(img, (c * target_size[0], r * target_size[1]))
-        
+
     return grid_image
 
-def generate_image(prompt, neg_prompt="blurry, low quality, deformed", width=1024, height=1024, steps=30, cfg=7.5, seed=42, model_name="epicrealismXL_pureFix.safetensors", task="t2i", init_image=None, upscaler="None"):
+def generate_image(
+    prompt,
+    neg_prompt="blurry, low quality, deformed",
+    width=1024,
+    height=1024,
+    steps=30,
+    cfg=7.5,
+    seed=42,
+    model_name="epicrealismXL_pureFix.safetensors",
+    task="t2i",
+    init_image=None,
+    upscaler="None",
+    style_preset="None",
+    lora_name="None",
+    lora_strength=0.75,
+    quality_grade=None,
+    aspect_ratio_label=None
+):
+    final_prompt = prompt or ""
+    style_suffix = art_style_suffix_map.get(style_preset or "None", "")
+    if style_suffix:
+        final_prompt = f"{final_prompt}, {style_suffix}".strip(", ")
+
     headers = {
         "Authorization": f"Bearer {RUNPOD_API_KEY}",
         "Content-Type": "application/json"
     }
-    
+
     payload = {
         "input": {
             "task": task,
             "model": model_name,
-            "prompt": prompt,
+            "prompt": final_prompt,
             "negative_prompt": neg_prompt,
+            "width": int(width) if width else 1024,
+            "height": int(height) if height else 1024,
             "steps": int(steps) if steps else 30,
             "guidance_scale": float(cfg) if cfg else 7.5,
-            "upscaler": upscaler
+            "seed": int(seed) if seed else 42,
+            "upscaler": upscaler,
+            "style_preset": style_preset or "None",
+            "lora": lora_name or "None",
+            "lora_weight": float(lora_strength) if lora_strength is not None else 0.75
         }
     }
-    
+
+    if quality_grade:
+        payload["input"]["quality_grade"] = quality_grade
+    if aspect_ratio_label:
+        payload["input"]["aspect_ratio"] = aspect_ratio_label
+
     if init_image is not None:
         buffered = io.BytesIO()
         init_image.save(buffered, format="PNG")
         payload["input"]["init_image"] = base64.b64encode(buffered.getvalue()).decode("utf-8")
-        
+
     try:
         response = requests.post(RUNPOD_ENDPOINT, json=payload, headers=headers, timeout=180)
         res_json = response.json()
-        
+
         if "output" in res_json:
             output = res_json["output"]
             if isinstance(output, dict) and "image" in output:
@@ -207,9 +269,44 @@ def generate_image(prompt, neg_prompt="blurry, low quality, deformed", width=102
         print(f"Connection Error to RunPod: {str(e)}")
         return None
 
-def generate_multi_input_task(prompt, neg_prompt, width, height, steps, cfg, seed, model_name, task, img1, img2, img3, upscaler):
+def generate_multi_input_task(
+    prompt,
+    neg_prompt,
+    width,
+    height,
+    steps,
+    cfg,
+    seed,
+    model_name,
+    task,
+    img1,
+    img2,
+    img3,
+    upscaler,
+    lora_name="None",
+    lora_strength=0.75,
+    quality_grade=None,
+    aspect_ratio_label=None
+):
     composite_img = auto_composite_dynamic_grid(img1, img2, img3)
-    return generate_image(prompt, neg_prompt, width, height, steps, cfg, seed, model_name, task, composite_img, upscaler)
+    return generate_image(
+        prompt=prompt,
+        neg_prompt=neg_prompt,
+        width=width,
+        height=height,
+        steps=steps,
+        cfg=cfg,
+        seed=seed,
+        model_name=model_name,
+        task=task,
+        init_image=composite_img,
+        upscaler=upscaler,
+        style_preset="None",
+        lora_name=lora_name,
+        lora_strength=lora_strength,
+        quality_grade=quality_grade,
+        aspect_ratio_label=aspect_ratio_label
+    )
 
 master_prompt_choices = []
 master_prompt_dict = {}
@@ -253,9 +350,9 @@ def handle_cgi_slash_command(command_key):
 def chat_bot_response(message, history):
     if not message:
         return history, ""
-    
+
     msg_lower = message.lower()
-    
+
     if "puja" in msg_lower or "durga" in msg_lower or "festival" in msg_lower:
         bot_reply = "For editing Durga Puja or festive pictures, you can use our 'Presets 🎨' tab or 'Retouch ⚡' tab which features various festive templates and professional master prompts."
     elif "cinematic" in msg_lower or "video" in msg_lower or "animation" in msg_lower:
@@ -295,11 +392,9 @@ html, body {{
 }}
 
 header, footer, #footer, .footer, .built-with, div[class*="footer"],
-.gradio-container > footer, .gradio-container > header, div[class*="header"], 
+.gradio-container > footer, .gradio-container > header, div[class*="header"],
 button[aria-label*="theme"], button[title*="theme"], .theme-toggle,
-div[class*="absolute"][class*="top-"], div[class*="fixed"][class*="top-"],
 .svelte-1ipelgc, .svelte-1g7vh8a, a[href*="huggingface"], iframe[src*="huggingface"],
-.contain > div.absolute, .contain > div.fixed, div[style*="z-index: 99999"],
 div[class*="space-status"], div[class*="runtime-status"],
 button.overflow-dropdown-btn, .tab-nav .overflow-menu, button[aria-label*="More"] {{
     display: none !important;
@@ -349,12 +444,50 @@ button[role="tab"][aria-selected="true"], button[role="tab"].selected {{
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9) !important;
 }}
 
-label, .block label, span[data-testid="block-info"], .label-wrap {{
+label, span[data-testid="block-info"], .label-wrap {{
     background-color: transparent !important;
     color: #38bdf8 !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
     border: none !important;
+}}
+
+/* Radio buttons fix: make labels and radio circles clearly interactive & visible */
+div[data-testid="radio-group"] label,
+.gr-radio label {{
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    color: #ffffff !important;
+    background: rgba(10, 15, 35, 0.72) !important;
+    border: 1px solid rgba(56, 189, 248, 0.45) !important;
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    margin: 2px !important;
+    user-select: none !important;
+    position: relative !important;
+    z-index: 5 !important;
+}}
+
+div[data-testid="radio-group"] input[type="radio"],
+.gr-radio input[type="radio"] {{
+    accent-color: #38bdf8 !important;
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 6 !important;
+}}
+
+div[data-testid="radio-group"] label:has(input:checked),
+.gr-radio label:has(input:checked) {{
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%) !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.65) !important;
 }}
 
 .panel, .form, .gr-box, .gr-panel, .block, .gr-block, .tabitem, .accordion, fieldset {{
@@ -369,9 +502,8 @@ label, .block label, span[data-testid="block-info"], .label-wrap {{
     box-shadow: none !important;
 }}
 
-input, textarea, select, .gr-input, .gr-text-input, .wrap, div[data-testid="dropdown"], button, .gr-button {{
-    background: rgba(5, 2, 20, 0.35) !important;
-    background-color: rgba(5, 2, 20, 0.35) !important;
+input[type="text"], input[type="number"], textarea, select, .gr-input, .gr-text-input, div[data-testid="dropdown"], button, .gr-button {{
+    background: rgba(5, 2, 20, 0.45) !important;
     color: #ffffff !important;
     border: 1px solid rgba(56, 189, 248, 0.5) !important;
     border-radius: 10px !important;
@@ -397,9 +529,8 @@ custom_js = f"""
 function() {{
     const killStyle = document.createElement('style');
     killStyle.innerHTML = `
-        header, footer, #footer, .footer, .built-with,
-        div[style*="position: fixed"], div[style*="z-index"] {{ 
-            display: none !important; 
+        header, footer, #footer, .footer, .built-with {{
+            display: none !important;
         }}
         .tab-nav button.overflow-dropdown-btn, .tab-nav > .overflow-menu, button[aria-label*="More"] {{
             display: none !important;
@@ -423,13 +554,6 @@ function() {{
             }});
         }}
     }}
-
-    setInterval(() => {{
-        const hiddenTabs = document.querySelectorAll('button[role="tab"]');
-        hiddenTabs.forEach(tab => {{
-            tab.style.setProperty('display', 'inline-flex', 'important');
-        }});
-    }}, 200);
 }}
 """
 
@@ -441,7 +565,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
         <span style="font-size: 16px; font-weight: 700; color: #38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);">| AI Creative Studio</span>
     </div>
     """)
-    
+
     with gr.Row():
         checkpoint_model = gr.Dropdown(
             choices=checkpoint_models_list,
@@ -473,8 +597,8 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
             with gr.Row():
                 with gr.Column(scale=1):
                     prompt = gr.Textbox(
-                        label="✍ Main Prompt", 
-                        placeholder="Describe your vision...", 
+                        label="✍ Main Prompt",
+                        placeholder="Describe your vision...",
                         lines=3,
                         interactive=True
                     )
@@ -483,25 +607,25 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         t2i_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     t2i_mic.stop_recording(fn=mock_transcribe, inputs=t2i_mic, outputs=prompt)
                     t2i_trans_btn.click(fn=auto_translate_prompt, inputs=prompt, outputs=prompt)
-                    
+
                     style_preset = gr.Radio(
-                        choices=["None", "Photorealistic", "Cinematic", "Oil Painting", "Anime", "Cyberpunk", "3D Render"], 
-                        value="None", 
+                        choices=["None", "Photorealistic", "Cinematic", "Oil Painting", "Anime", "Cyberpunk", "3D Render"],
+                        value="None",
                         label="🎨 Art Style Preset",
                         interactive=True
                     )
-                    
+
                     t2i_upscaler = gr.Dropdown(
                         choices=upscaler_models_list,
                         value="None",
                         label="🔍 Select AI Upscaler Engine",
                         interactive=True
                     )
-                    
+
                     with gr.Accordion("📐 Aspect Ratio & Pixel Dimensions", open=True):
                         aspect_ratio = gr.Radio(
-                            choices=aspect_ratios_list, 
-                            value="1:1 (1024x1024 Square)", 
+                            choices=aspect_ratios_list,
+                            value="1:1 (1024x1024 Square)",
                             label="Select Aspect Ratio Preset",
                             interactive=True
                         )
@@ -509,21 +633,44 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                             width = gr.Slider(512, 2048, value=1024, step=64, label="Custom Width", interactive=True)
                             height = gr.Slider(512, 2048, value=1024, step=64, label="Custom Height", interactive=True)
 
+                        aspect_ratio.change(
+                            fn=update_dimensions_from_preset,
+                            inputs=aspect_ratio,
+                            outputs=[width, height]
+                        )
+
                     generate_btn = gr.Button("⚡ Generate Creative Image", variant="primary", interactive=True)
-                
+
                 with gr.Column(scale=1):
                     output_image = gr.Image(label="🖼 Generated Output Showcase", interactive=False, type="pil")
 
             generate_btn.click(
                 fn=generate_image,
-                inputs=[prompt, gr.State("blurry, low quality, deformed"), width, height, gr.State(30), gr.State(7.5), gr.State(42), checkpoint_model, gr.State("t2i"), gr.State(None), t2i_upscaler],
+                inputs=[
+                    prompt,
+                    gr.State("blurry, low quality, deformed"),
+                    width,
+                    height,
+                    gr.State(30),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("t2i"),
+                    gr.State(None),
+                    t2i_upscaler,
+                    style_preset,
+                    lora_model,
+                    lora_weight,
+                    gr.State(None),
+                    aspect_ratio
+                ],
                 outputs=output_image
             )
 
         # 2. Quick AI Retouch & Presets Tab
         with gr.TabItem("Retouch ⚡"):
             gr.Markdown('<h3 class="glowing-header">⚡ Quick AI Retouch & Presets [200+ Master Prompts] (Multi-Ref & Auto-Translator)</h3>')
-            
+
             with gr.Accordion("📂 Multi-Reference Input Slots (3 Slots)", open=True):
                 with gr.Row():
                     quick_img_1 = gr.Image(label="🖼️ Slot 1: Primary Image / Subject", type="pil", interactive=True)
@@ -533,19 +680,19 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
             with gr.Row():
                 with gr.Column(scale=1):
                     quick_prompt = gr.Textbox(
-                        label="✍️ Slash Command / Prompt Box (Auto-Translator Enabled)", 
-                        placeholder="Type slash command or prompt in any language...", 
+                        label="✍️ Slash Command / Prompt Box (Auto-Translator Enabled)",
+                        placeholder="Type slash command or prompt in any language...",
                         lines=3,
                         interactive=True
                     )
-                    
+
                     with gr.Row():
                         quick_mic = gr.Audio(sources=["microphone"], type="filepath", label="🎙️ Voice-to-Text")
                         quick_translate_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
-                    
+
                     quick_mic.stop_recording(fn=mock_transcribe, inputs=quick_mic, outputs=quick_prompt)
                     quick_translate_btn.click(fn=auto_translate_prompt, inputs=quick_prompt, outputs=quick_prompt)
-                    
+
                     with gr.Row():
                         quick_slash_select = gr.Dropdown(
                             choices=quick_retouch_choices,
@@ -584,7 +731,9 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                     quick_img_1,
                     quick_img_2,
                     quick_img_3,
-                    quick_upscaler
+                    quick_upscaler,
+                    lora_model,
+                    lora_weight
                 ],
                 outputs=quick_output
             )
@@ -592,7 +741,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
         # 3. Dynamic Flow AI & Master Prompts Tab
         with gr.TabItem("Flow ⭐"):
             gr.Markdown('<h3 class="glowing-header">🔥 Dynamic Flow AI & Master Prompts Library (Auto-Translator & Multi-Input)</h3>')
-            
+
             with gr.Accordion("📂 Multi-Input Image Slots (1 to 3 Slots)", open=True):
                 with gr.Row():
                     dyn_img_1 = gr.Image(label="🖼️ Slot 1: Primary Subject / Photo", type="pil", interactive=True)
@@ -607,7 +756,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         label="📚 Select Master Prompt Category / Item [200+ Master Prompts] ⚡",
                         interactive=True
                     )
-                    
+
                     master_desc_box = gr.Textbox(
                         label="📄 Prompt Description",
                         value=load_master_prompt_desc(master_prompt_choices[0]) if master_prompt_choices else "",
@@ -618,10 +767,10 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                     with gr.Row():
                         master_mic = gr.Audio(sources=["microphone"], type="filepath", label="🎙️ Voice-to-Text")
                         dyn_translate_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
-                    
+
                     master_mic.stop_recording(fn=mock_transcribe, inputs=master_mic, outputs=master_desc_box)
                     dyn_translate_btn.click(fn=auto_translate_prompt, inputs=master_desc_box, outputs=master_desc_box)
-                    
+
                     master_dropdown.change(
                         fn=load_master_prompt_desc,
                         inputs=master_dropdown,
@@ -643,19 +792,22 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
             dyn_generate_btn.click(
                 fn=generate_multi_input_task,
                 inputs=[
-                    master_desc_box, 
-                    gr.State("blurry, low quality, deformed"), 
-                    gr.State(1024), 
-                    gr.State(1024), 
-                    gr.State(30), 
-                    gr.State(7.5), 
-                    gr.State(42), 
-                    checkpoint_model, 
-                    gr.State("dynamic_flow"), 
-                    dyn_img_1, 
-                    dyn_img_2, 
+                    master_desc_box,
+                    gr.State("blurry, low quality, deformed"),
+                    gr.State(1024),
+                    gr.State(1024),
+                    gr.State(30),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("dynamic_flow"),
+                    dyn_img_1,
+                    dyn_img_2,
                     dyn_img_3,
-                    gr.State("None")
+                    gr.State("None"),
+                    lora_model,
+                    lora_weight,
+                    dyn_render_quality
                 ],
                 outputs=dyn_output_image
             )
@@ -663,7 +815,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
         # 4. CGI Billboard Tab
         with gr.TabItem("Billboard ✨"):
             gr.Markdown('<h3 class="glowing-header">🎥 Multi-Asset Storyboard, CGI 3D Billboard & Camera Motion Studio</h3>')
-            
+
             with gr.Accordion("📂 Multi-Asset Input Slots (6 Slots)", open=True):
                 with gr.Row():
                     asset_1 = gr.Image(label="🛍️ Slot 1: Primary Product / Character", type="pil", interactive=True)
@@ -673,12 +825,12 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                     asset_4 = gr.Image(label="🌄 Slot 4: Secondary Environment / Skybox", type="pil", interactive=True)
                     asset_5 = gr.Image(label="🕶️ Slot 5: Primary Prop / Outfit", type="pil", interactive=True)
                     asset_6 = gr.Image(label="👜 Slot 6: Secondary Prop / Accessory", type="pil", interactive=True)
-            
+
             with gr.Row():
                 with gr.Column(scale=1):
                     df_prompt = gr.Textbox(
-                        label="✍️ Prompt / Slash Command Box", 
-                        placeholder="Type slash command or commercial prompt...", 
+                        label="✍️ Prompt / Slash Command Box",
+                        placeholder="Type slash command or commercial prompt...",
                         lines=3,
                         interactive=True
                     )
@@ -687,7 +839,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         df_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     df_mic.stop_recording(fn=mock_transcribe, inputs=df_mic, outputs=df_prompt)
                     df_trans_btn.click(fn=auto_translate_prompt, inputs=df_prompt, outputs=df_prompt)
-                    
+
                     with gr.Row():
                         cgi_slash_select = gr.Dropdown(
                             choices=list(cgi_billboard_slash_command_dict.keys()),
@@ -705,13 +857,13 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         label="🎬 Video Render Quality Grade",
                         interactive=True
                     )
-                    
+
                     df_btn = gr.Button("🚀 Generate 6-Slot Multi-Asset Storyboard Video", variant="primary", interactive=True)
-                    
+
                 with gr.Column(scale=1):
                     preview_grid_box = gr.Image(label="🖼️ 6-Slot Auto-Generated Storyboard / Billboard Grid Preview", interactive=False, type="pil")
                     df_output = gr.Video(label="🎥 Generated Dynamic Motion Video Output", interactive=False)
-                    
+
                     for asset in [asset_1, asset_2, asset_3, asset_4, asset_5, asset_6]:
                         asset.change(
                             fn=auto_composite_storyboard_grid,
@@ -721,14 +873,30 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
 
             df_btn.click(
                 fn=generate_image,
-                inputs=[df_prompt, gr.State("blurry, low quality, deformed"), gr.State(1024), gr.State(1024), gr.State(25), gr.State(7.5), gr.State(42), checkpoint_model, gr.State("dynamic_flow"), preview_grid_box, gr.State("None")],
-                outputs=output_image
+                inputs=[
+                    df_prompt,
+                    gr.State("blurry, low quality, deformed"),
+                    gr.State(1024),
+                    gr.State(1024),
+                    gr.State(25),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("cgi_billboard"),
+                    preview_grid_box,
+                    gr.State("None"),
+                    gr.State("None"),
+                    lora_model,
+                    lora_weight,
+                    df_model_engine
+                ],
+                outputs=df_output
             )
 
         # 5. Cinematic Studio Tab
         with gr.TabItem("Cinematic 🎥"):
             gr.Markdown('<h3 class="glowing-header">🎥 Masterpiece High-Definition Cinematic Video Generator</h3>')
-            
+
             with gr.Accordion("📂 Multi-Reference Input Slots (3 Slots for Image-to-Video)", open=True):
                 with gr.Row():
                     cine_img_1 = gr.Image(label="📥 Slot 1: Primary Image / Subject", type="pil", interactive=True)
@@ -738,9 +906,9 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
             with gr.Row():
                 with gr.Column(scale=1):
                     cinematic_prompt = gr.Textbox(
-                        label="🎞 Cinematic Motion Description", 
-                        placeholder="Type any creative vision...", 
-                        lines=3, 
+                        label="🎞 Cinematic Motion Description",
+                        placeholder="Type any creative vision...",
+                        lines=3,
                         interactive=True
                     )
                     with gr.Row():
@@ -748,7 +916,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         cine_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     cine_mic.stop_recording(fn=mock_transcribe, inputs=cine_mic, outputs=cinematic_prompt)
                     cine_trans_btn.click(fn=auto_translate_prompt, inputs=cinematic_prompt, outputs=cinematic_prompt)
-                    
+
                     cine_quality = gr.Dropdown(
                         choices=video_render_quality_list,
                         value=video_render_quality_list[0],
@@ -767,7 +935,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                 with gr.Column(scale=1):
                     cine_preview_grid = gr.Image(label="🖼️ Auto-Generated Multi-Reference Grid Preview", interactive=False, type="pil")
                     cinematic_output = gr.Video(label="🎥 Generated Cinematic Video Output", interactive=False)
-                    
+
                     for asset in [cine_img_1, cine_img_2, cine_img_3]:
                         asset.change(
                             fn=auto_composite_dynamic_grid,
@@ -790,7 +958,11 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                     cine_img_1,
                     cine_img_2,
                     cine_img_3,
-                    gr.State("None")
+                    gr.State("None"),
+                    lora_model,
+                    lora_weight,
+                    cine_quality,
+                    cine_aspect
                 ],
                 outputs=cinematic_output
             )
@@ -811,7 +983,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         i2i_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     i2i_mic.stop_recording(fn=mock_transcribe, inputs=i2i_mic, outputs=i2i_prompt)
                     i2i_trans_btn.click(fn=auto_translate_prompt, inputs=i2i_prompt, outputs=i2i_prompt)
-                    
+
                     i2i_upscaler = gr.Dropdown(
                         choices=upscaler_models_list,
                         value="None",
@@ -838,7 +1010,9 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                     i2i_img_1,
                     i2i_img_2,
                     i2i_img_3,
-                    i2i_upscaler
+                    i2i_upscaler,
+                    lora_model,
+                    lora_weight
                 ],
                 outputs=i2i_output
             )
@@ -854,7 +1028,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         anim_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     anim_mic.stop_recording(fn=mock_transcribe, inputs=anim_mic, outputs=anim_prompt)
                     anim_trans_btn.click(fn=auto_translate_prompt, inputs=anim_prompt, outputs=anim_prompt)
-                    
+
                     anim_quality = gr.Dropdown(
                         choices=video_render_quality_list,
                         value=video_render_quality_list[0],
@@ -868,8 +1042,24 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
 
             anim_btn.click(
                 fn=generate_image,
-                inputs=[anim_prompt, gr.State("blurry, low quality, deformed"), gr.State(1024), gr.State(1024), gr.State(25), gr.State(7.5), gr.State(42), checkpoint_model, gr.State("animation"), anim_input_image, gr.State("None")],
-                outputs=output_image
+                inputs=[
+                    anim_prompt,
+                    gr.State("blurry, low quality, deformed"),
+                    gr.State(1024),
+                    gr.State(1024),
+                    gr.State(25),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("animation"),
+                    anim_input_image,
+                    gr.State("None"),
+                    gr.State("None"),
+                    lora_model,
+                    lora_weight,
+                    anim_quality
+                ],
+                outputs=anim_output
             )
 
         # 8. Face Swapping & Consistency Tool Tab
@@ -885,21 +1075,37 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         face_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     face_mic.stop_recording(fn=mock_transcribe, inputs=face_mic, outputs=face_prompt)
                     face_trans_btn.click(fn=auto_translate_prompt, inputs=face_prompt, outputs=face_prompt)
-                    
+
                     face_upscaler = gr.Dropdown(
                         choices=upscaler_models_list,
                         value="None",
                         label="🔍 Select AI Upscaler Engine",
                         interactive=True
                     )
-                    
+
                     face_swap_btn = gr.Button("🔄 Execute Face Swap & Consistency", variant="primary", interactive=True)
                 with gr.Column(scale=1):
                     face_output_img = gr.Image(label="✨ Consistent Face Swapped Output", interactive=False, type="pil")
 
             face_swap_btn.click(
                 fn=generate_multi_input_task,
-                inputs=[face_prompt, gr.State("blurry"), gr.State(1024), gr.State(1024), gr.State(30), gr.State(7.5), gr.State(42), checkpoint_model, gr.State("i2i"), face_source_img, face_target_img, gr.State(None), face_upscaler],
+                inputs=[
+                    face_prompt,
+                    gr.State("blurry"),
+                    gr.State(1024),
+                    gr.State(1024),
+                    gr.State(30),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("i2i"),
+                    face_source_img,
+                    face_target_img,
+                    gr.State(None),
+                    face_upscaler,
+                    lora_model,
+                    lora_weight
+                ],
                 outputs=face_output_img
             )
 
@@ -915,28 +1121,43 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         bg_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     bg_mic.stop_recording(fn=mock_transcribe, inputs=bg_mic, outputs=bg_prompt)
                     bg_trans_btn.click(fn=auto_translate_prompt, inputs=bg_prompt, outputs=bg_prompt)
-                    
+
                     bg_upscaler = gr.Dropdown(
                         choices=upscaler_models_list,
                         value="None",
                         label="🔍 Select AI Upscaler Engine",
                         interactive=True
                     )
-                    
+
                     bg_remove_btn = gr.Button("🚀 Remove Background Instantly", variant="primary", interactive=True)
                 with gr.Column(scale=1):
                     bg_output_img = gr.Image(label="✨ Background Removed Output", interactive=False, type="pil")
 
             bg_remove_btn.click(
                 fn=generate_image,
-                inputs=[bg_prompt, gr.State("blurry"), gr.State(1024), gr.State(1024), gr.State(20), gr.State(7.5), gr.State(42), checkpoint_model, gr.State("i2i"), bg_input_img, bg_upscaler],
+                inputs=[
+                    bg_prompt,
+                    gr.State("blurry"),
+                    gr.State(1024),
+                    gr.State(1024),
+                    gr.State(20),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("i2i"),
+                    bg_input_img,
+                    bg_upscaler,
+                    gr.State("None"),
+                    lora_model,
+                    lora_weight
+                ],
                 outputs=bg_output_img
             )
 
         # 10. Preset Template Gallery Tab
         with gr.TabItem("Presets 🎨"):
             gr.Markdown('<h3 class="glowing-header">🎨 Visual Preset Template Gallery (35+ Presets with 3-Slot Reference Upload)</h3>')
-            
+
             with gr.Accordion("📂 Multi-Reference Input Slots for Presets (3 Slots)", open=True):
                 with gr.Row():
                     preset_img_1 = gr.Image(label="🖼️ Slot 1: Primary Subject / Photo", type="pil", interactive=True)
@@ -962,16 +1183,16 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         preset_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     preset_mic.stop_recording(fn=mock_transcribe, inputs=preset_mic, outputs=preset_preview_text)
                     preset_trans_btn.click(fn=auto_translate_prompt, inputs=preset_preview_text, outputs=preset_preview_text)
-                    
+
                     preset_upscaler = gr.Dropdown(
                         choices=upscaler_models_list,
                         value="None",
                         label="🔍 Select AI Upscaler Engine",
                         interactive=True
                     )
-                    
+
                     preset_select_dropdown.change(fn=load_preset_template, inputs=preset_select_dropdown, outputs=preset_preview_text)
-                    
+
                     preset_load_btn = gr.Button("🚀 Generate Image from Preset", variant="primary", interactive=True)
                 with gr.Column(scale=1):
                     preset_output_img = gr.Image(label="✨ Preset Template Output Showcase", interactive=False, type="pil")
@@ -979,19 +1200,21 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
             preset_load_btn.click(
                 fn=generate_multi_input_task,
                 inputs=[
-                    preset_preview_text, 
-                    gr.State("blurry, low quality"), 
-                    gr.State(1024), 
-                    gr.State(1024), 
-                    gr.State(30), 
-                    gr.State(7.5), 
-                    gr.State(42), 
-                    checkpoint_model, 
-                    gr.State("preset_flow"), 
-                    preset_img_1, 
-                    preset_img_2, 
-                    preset_img_3, 
-                    preset_upscaler
+                    preset_preview_text,
+                    gr.State("blurry, low quality"),
+                    gr.State(1024),
+                    gr.State(1024),
+                    gr.State(30),
+                    gr.State(7.5),
+                    gr.State(42),
+                    checkpoint_model,
+                    gr.State("preset_flow"),
+                    preset_img_1,
+                    preset_img_2,
+                    preset_img_3,
+                    preset_upscaler,
+                    lora_model,
+                    lora_weight
                 ],
                 outputs=preset_output_img
             )
@@ -1007,7 +1230,7 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
                         pg_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=2)
                     pg_mic.stop_recording(fn=mock_transcribe, inputs=pg_mic, outputs=base_idea)
                     pg_trans_btn.click(fn=auto_translate_prompt, inputs=base_idea, outputs=base_idea)
-                    
+
                     enhance_btn = gr.Button("✨ Enhance & Generate Advanced Prompt", variant="primary", interactive=True)
                 with gr.Column(scale=1):
                     enhanced_prompt_output = gr.Textbox(label="📝 Optimized AI Prompt Result", lines=4, interactive=False)
@@ -1023,19 +1246,18 @@ with gr.Blocks(title="AccPixelForge", css=custom_css, js=custom_js, head=favicon
             gr.Markdown('<h3 class="glowing-header">💬 AI Creative Assistant Live Chat</h3>')
             with gr.Column():
                 chatbot_view = gr.Chatbot(label="💬 AI Creative Assistant Chat", type="messages", height=400)
-                
+
                 with gr.Row():
                     chat_msg = gr.Textbox(label="Type your message...", placeholder="Ask anything...", scale=4, container=False)
                     chat_send_btn = gr.Button("Send Message 🚀", variant="primary", scale=1)
-                
+
                 with gr.Row():
                     chat_mic = gr.Audio(sources=["microphone"], type="filepath", label="🎙️ Voice-to-Text Input", scale=2)
                     chat_trans_btn = gr.Button("🌐 Auto-Translate to English Prompt", scale=3)
-                
+
                 chat_mic.stop_recording(fn=mock_transcribe, inputs=chat_mic, outputs=chat_msg)
                 chat_trans_btn.click(fn=auto_translate_prompt, inputs=chat_msg, outputs=chat_msg)
 
-                # Event bindings for sending message via Button Click or Enter Key
                 chat_send_btn.click(
                     fn=chat_bot_response,
                     inputs=[chat_msg, chatbot_view],
