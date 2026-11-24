@@ -523,6 +523,78 @@ button:hover, .gr-button:hover {{
     font-weight: 700 !important;
     text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
 }}
+
+/* Transparent / Glassy Dropdown & Input Styling (Checkpoint, LoRA, etc.) */
+.gradio-container .gr-dropdown,
+.gradio-container div[data-testid="dropdown"],
+.gradio-container div[data-testid="dropdown"] > div,
+.gradio-container div[data-testid="dropdown"] .wrap,
+.gradio-container div[data-testid="dropdown"] .wrap-inner,
+.gradio-container div[data-testid="dropdown"] .secondary-wrap,
+.gradio-container div[data-testid="dropdown"] input,
+.gradio-container .gr-dropdown input,
+.gradio-container .gr-dropdown .wrap,
+.gradio-container input[type="text"],
+.gradio-container textarea {{
+    background: rgba(6, 14, 34, 0.42) !important;
+    background-color: rgba(6, 14, 34, 0.42) !important;
+    color: #7dd3fc !important;
+    -webkit-text-fill-color: #7dd3fc !important;
+    border-color: rgba(56, 189, 248, 0.48) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}}
+
+.gradio-container div[data-testid="dropdown"] svg,
+.gradio-container .gr-dropdown svg {{
+    color: #7dd3fc !important;
+    fill: #7dd3fc !important;
+}}
+
+/* Dropdown popup options list */
+.gradio-container ul.options,
+.gradio-container .options,
+.gradio-container div[role="listbox"],
+.gradio-container ul[role="listbox"] {{
+    background: rgba(8, 18, 42, 0.88) !important;
+    background-color: rgba(8, 18, 42, 0.88) !important;
+    color: #e0f2fe !important;
+    border: 1px solid rgba(56, 189, 248, 0.5) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}}
+
+.gradio-container ul.options li,
+.gradio-container .options li,
+.gradio-container div[role="option"],
+.gradio-container ul[role="listbox"] li {{
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #e0f2fe !important;
+}}
+
+.gradio-container ul.options li:hover,
+.gradio-container .options li:hover,
+.gradio-container div[role="option"]:hover,
+.gradio-container ul[role="listbox"] li:hover {{
+    background: rgba(2, 132, 199, 0.45) !important;
+    background-color: rgba(2, 132, 199, 0.45) !important;
+    color: #ffffff !important;
+}}
+
+/* Keep active tabs & selected radio buttons vibrant */
+.gradio-container button[role="tab"][aria-selected="true"],
+.gradio-container button[role="tab"].selected {{
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%) !important;
+}}
+
+.gradio-container div[data-testid="radio-group"] label,
+.gradio-container .gr-radio label {{
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}}
 """
 
 custom_js = f"""
