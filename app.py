@@ -526,21 +526,28 @@ button:hover, .gr-button:hover {{
 
 /* Transparent / Glassy Dropdown & Input Styling (Checkpoint, LoRA, etc.) */
 .gradio-container .gr-dropdown,
+.gradio-container .gr-dropdown *,
+.gradio-container div[data-testid="dropdown"],
+.gradio-container div[data-testid="dropdown"] * {{
+    background-color: transparent !important;
+}}
+
+.gradio-container .gr-dropdown,
+.gradio-container .gr-dropdown .wrap,
+.gradio-container .gr-dropdown .wrap-inner,
+.gradio-container .gr-dropdown input,
 .gradio-container div[data-testid="dropdown"],
 .gradio-container div[data-testid="dropdown"] > div,
 .gradio-container div[data-testid="dropdown"] .wrap,
 .gradio-container div[data-testid="dropdown"] .wrap-inner,
-.gradio-container div[data-testid="dropdown"] .secondary-wrap,
 .gradio-container div[data-testid="dropdown"] input,
-.gradio-container .gr-dropdown input,
-.gradio-container .gr-dropdown .wrap,
 .gradio-container input[type="text"],
 .gradio-container textarea {{
-    background: rgba(6, 14, 34, 0.42) !important;
-    background-color: rgba(6, 14, 34, 0.42) !important;
+    background: rgba(6, 14, 34, 0.45) !important;
+    background-color: rgba(6, 14, 34, 0.45) !important;
     color: #7dd3fc !important;
     -webkit-text-fill-color: #7dd3fc !important;
-    border-color: rgba(56, 189, 248, 0.48) !important;
+    border-color: rgba(56, 189, 248, 0.52) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
 }}
@@ -556,10 +563,10 @@ button:hover, .gr-button:hover {{
 .gradio-container .options,
 .gradio-container div[role="listbox"],
 .gradio-container ul[role="listbox"] {{
-    background: rgba(8, 18, 42, 0.88) !important;
-    background-color: rgba(8, 18, 42, 0.88) !important;
+    background: rgba(8, 18, 42, 0.90) !important;
+    background-color: rgba(8, 18, 42, 0.90) !important;
     color: #e0f2fe !important;
-    border: 1px solid rgba(56, 189, 248, 0.5) !important;
+    border: 1px solid rgba(56, 189, 248, 0.55) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
 }}
