@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AccPixelForge</title>
+  <link id="dynamic-favicon" rel="icon" type="image/png" href="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background-color: #000000;
+      background-repeat: no-repeat;
+      background-position: center top;
+      background-attachment: fixed;
+      background-size: 100% 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .app-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 10px 16px 32px 16px;
+    }
+
+    /* Top Header Banner */
+    .top-banner {
+      display: flex;
+      align-items: center;
+      padding: 8px 15px;
+      background: rgba(5, 2, 20, 0.25);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .top-banner img {
+      height: 50px;
+      margin-right: 15px;
+    }
+
+    .brand-fallback {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ff6b00;
+      margin-right: 15px;
+    }
+
+    .top-subtitle {
+      font-size: 16px;
+      font-weight: 700;
+      color: #38bdf8;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+    }
+
+    /* Global Model Bar */
+    .model-bar {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .model-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-panel {
+      background: transparent;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #ffffff;
+    }
+
+    label.field-label {
+      display: block;
+      color: #38bdf8;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Tabs Navigation */
+    .tab-nav {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 4px;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.8);
+      padding: 6px;
+      justify-content: space-between;
+      width: 100%;
+      overflow-x: auto;
+      background: rgba(5, 2, 20, 0.45);
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      flex: 1 1 auto;
+      white-space: nowrap;
+      text-align: center;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 8px rgba(56, 189, 248, 0.6);
+      background: rgba(10, 5, 30, 0.55);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 11.5px;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(219, 39, 119, 0.9) 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+    }
+
+    .tab-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 14px;
+      padding: 16px;
+      background: transparent;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .glowing-header {
+      color: #7dd3fc;
+      font-weight: 700;
+      font-size: 18px;
+      margin: 0 0 14px 0;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .three-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .row-flex {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Inputs, Textareas, Selects */
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      background: rgba(6, 14, 34, 0.55);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.52);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      outline: none;
+    }
+
+    select option {
+      background: #08122a;
+      color: #e0f2fe;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    /* Range Slider */
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: #38bdf8;
+      cursor: pointer;
+    }
+
+    .slider-val {
+      min-width: 48px;
+      text-align: center;
+      background: rgba(6, 14, 34, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: #7dd3fc;
+      font-weight: 600;
+    }
+
+    /* Radio Pill Groups */
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .radio-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #ffffff;
+      background: rgba(10, 15, 35, 0.72);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .radio-pill input[type="radio"] {
+      accent-color: #38bdf8;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .radio-pill:has(input:checked) {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
+    }
+
+    /* Buttons */
+    .action-btn {
+      background: rgba(5, 2, 20, 0.55);
+      color: #ffffff;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(219, 39, 119, 0.9) 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85) 0%, rgba(124, 58, 237, 0.85) 100%);
+      border-color: #38bdf8;
+    }
+
+    /* Accordion / Collapsible Sections */
+    details.glass-accordion {
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      background: rgba(5, 2, 20, 0.25);
+    }
+
+    details.glass-accordion summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #38bdf8;
+      font-size: 13.5px;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    details.glass-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.glass-accordion[open] summary {
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    /* Image Upload Slots & Output Showcase */
+    .upload-slot {
+      border: 1px dashed rgba(56, 189, 248, 0.55);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(5, 2, 20, 0.35);
+      text-align: center;
+      position: relative;
+    }
+
+    .upload-slot .slot-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #7dd3fc;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .upload-drop {
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(6, 14, 34, 0.45);
+      padding: 8px;
+    }
+
+    .upload-drop img {
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .upload-hint {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .clear-slot-btn {
+      margin-top: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      background: rgba(185, 28, 28, 0.55);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .showcase-box {
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(5, 2, 20, 0.35);
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .showcase-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 270px;
+      border-radius: 10px;
+      background: rgba(6, 14, 34, 0.45);
+      overflow: hidden;
+      text-align: center;
+      padding: 10px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .showcase-content img,
+    .showcase-content video {
+      max-width: 100%;
+      max-height: 440px;
+      border-radius: 10px;
+    }
+
+    /* Voice Audio Row */
+    .voice-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(6, 14, 34, 0.5);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: 10px;
+      padding: 6px 10px;
+      flex: 1;
+    }
+
+    /* Chatbot Window */
+    .chat-window {
+      height: 380px;
+      overflow-y: auto;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(5, 2, 20, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85), rgba(124, 58, 237, 0.85));
+      border: 1px solid #38bdf8;
+      color: #ffffff;
+    }
+
+    .chat-bot {
+      align-self: flex-start;
+      background: rgba(10, 20, 45, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #e0f2fe;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Banner -->
+    <div class="top-banner" id="top-banner">
+      <span class="brand-fallback" id="brand-logo-wrap">AccPixelForge</span>
+      <span class="top-subtitle">| AI Creative Studio</span>
+    </div>
+
+    <!-- Global Checkpoint / LoRA / Weight Bar -->
+    <div class="model-bar">
+      <div class="glass-panel">
+        <label class="field-label" for="global-checkpoint">🤖 Select Checkpoint Model</label>
+        <select id="global-checkpoint"></select>
+      </div>
+      <div class="glass-panel">
+        <label class="field-label" for="global-lora">✨ Select LoRA Enhancement</label>
+        <select id="global-lora"></select>
+      </div>
+      <div class="glass-panel">
+        <label class="field-label" for="global-lora-weight">🎯 LoRA Weight/Strength</label>
+        <div class="slider-wrap">
+          <input type="range" id="global-lora-weight" min="0" max="1.5" step="0.05" value="0.75" oninput="document.getElementById('lora-val').textContent = this.value" />
+          <span class="slider-val" id="lora-val">0.75</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 Studio Tabs -->
+    <div class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="tab-t2i">Text ➔ Img</button>
+      <button class="tab-btn" data-tab="tab-retouch">Retouch ⚡</button>
+      <button class="tab-btn" data-tab="tab-flow">Flow ⭐</button>
+      <button class="tab-btn" data-tab="tab-billboard">Billboard ✨</button>
+      <button class="tab-btn" data-tab="tab-cinematic">Cinematic 🎥</button>
+      <button class="tab-btn" data-tab="tab-i2i">Img ➔ Img</button>
+      <button class="tab-btn" data-tab="tab-anim">Img ➔ Anim 🎞️</button>
+      <button class="tab-btn" data-tab="tab-faceswap">Face Swap 🎭</button>
+      <button class="tab-btn" data-tab="tab-bgeraser">Bg Eraser ✂️</button>
+      <button class="tab-btn" data-tab="tab-presets">Presets 🎨</button>
+      <button class="tab-btn" data-tab="tab-prompts">Prompts G 💡</button>
+      <button class="tab-btn" data-tab="tab-chatbot">Chatbot 💬</button>
+    </div>
+
+    <!-- 1. Text-to-Image Tab -->
+    <div class="tab-pane active" id="tab-t2i">
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="t2i-prompt">✍ Main Prompt</label>
+          <textarea id="t2i-prompt" rows="3" placeholder="Describe your vision..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('t2i-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('t2i-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label">🎨 Art Style Preset</label>
+          <div class="radio-group" id="t2i-style-group"></div>
+
+          <label class="field-label" for="t2i-upscaler">🔍 Select AI Upscaler Engine</label>
+          <select id="t2i-upscaler" style="margin-bottom:12px;"></select>
+
+          <details class="glass-accordion" open>
+            <summary><span>📐 Aspect Ratio &amp; Pixel Dimensions</span><span>▼</span></summary>
+            <label class="field-label">Select Aspect Ratio Preset</label>
+            <div class="radio-group" id="t2i-aspect-group"></div>
+            <div class="two-col" style="margin-top:8px;">
+              <div>
+                <label class="field-label">Custom Width</label>
+                <div class="slider-wrap">
+                  <input type="range" id="t2i-width" min="512" max="2048" step="64" value="1024" oninput="document.getElementById('t2i-w-val').textContent=this.value" />
+                  <span class="slider-val" id="t2i-w-val">1024</span>
+                </div>
+              </div>
+              <div>
+                <label class="field-label">Custom Height</label>
+                <div class="slider-wrap">
+                  <input type="range" id="t2i-height" min="512" max="2048" step="64" value="1024" oninput="document.getElementById('t2i-h-val').textContent=this.value" />
+                  <span class="slider-val" id="t2i-h-val">1024</span>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <button type="button" class="action-btn primary-btn" onclick="runT2I()">⚡ Generate Creative Image</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">🖼 Generated Output Showcase</label>
+          <div class="showcase-content" id="t2i-output">Generated image will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Quick AI Retouch & Presets Tab -->
+    <div class="tab-pane" id="tab-retouch">
+      <h3 class="glowing-header">⚡ Quick AI Retouch &amp; Presets [200+ Master Prompts] (Multi-Ref &amp; Auto-Translator)</h3>
+      <details class="glass-accordion" open>
+        <summary><span>📂 Multi-Reference Input Slots (3 Slots)</span><span>▼</span></summary>
+        <div class="three-col" id="retouch-slots"></div>
+      </details>
+
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="retouch-prompt">✍️ Slash Command / Prompt Box (Auto-Translator Enabled)</label>
+          <textarea id="retouch-prompt" rows="3" placeholder="Type slash command or prompt in any language..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('retouch-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('retouch-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <div class="row-flex">
+            <div style="flex:2;">
+              <label class="field-label" for="retouch-slash-select">⚡ Quick Slash Command Select [200+ Master Prompts]</label>
+              <select id="retouch-slash-select"></select>
+            </div>
+            <button type="button" class="action-btn" style="flex:1;align-self:flex-end;" onclick="insertSelectedDesc('retouch-slash-select', 'retouch-prompt')">📥 Insert Slash Prompt</button>
+          </div>
+
+          <label class="field-label" for="retouch-upscaler">🔍 Select AI Upscaler Engine</label>
+          <select id="retouch-upscaler"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runMultiTask('quick_retouch', 'retouch-prompt', ['retouch-s1','retouch-s2','retouch-s3'], 'retouch-upscaler', null, null, 'retouch-output')">⚡ Run Quick Retouch &amp; Preset</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">✨ Quick Retouch Generated Output</label>
+          <div class="showcase-content" id="retouch-output">Quick retouch output will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Dynamic Flow AI & Master Prompts Tab -->
+    <div class="tab-pane" id="tab-flow">
+      <h3 class="glowing-header">🔥 Dynamic Flow AI &amp; Master Prompts Library (Auto-Translator &amp; Multi-Input)</h3>
+      <details class="glass-accordion" open>
+        <summary><span>📂 Multi-Input Image Slots (1 to 3 Slots)</span><span>▼</span></summary>
+        <div class="three-col" id="flow-slots"></div>
+      </details>
+
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="flow-master-select">📚 Select Master Prompt Category / Item [200+ Master Prompts] ⚡</label>
+          <select id="flow-master-select" style="margin-bottom:10px;" onchange="syncSelectToBox('flow-master-select', 'flow-desc-box')"></select>
+
+          <label class="field-label" for="flow-desc-box">📄 Prompt Description</label>
+          <textarea id="flow-desc-box" rows="5"></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('flow-desc-box')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('flow-desc-box')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="flow-quality">🎬 Video Render Quality Grade</label>
+          <select id="flow-quality"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runMultiTask('dynamic_flow', 'flow-desc-box', ['flow-s1','flow-s2','flow-s3'], null, 'flow-quality', null, 'flow-output')">⚡ Generate Dynamic Flow Result</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">✨ Dynamic Flow Generated Output</label>
+          <div class="showcase-content" id="flow-output">Dynamic flow output will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. CGI Billboard Tab -->
+    <div class="tab-pane" id="tab-billboard">
+      <h3 class="glowing-header">🎥 Multi-Asset Storyboard, CGI 3D Billboard &amp; Camera Motion Studio</h3>
+      <details class="glass-accordion" open>
+        <summary><span>📂 Multi-Asset Input Slots (6 Slots)</span><span>▼</span></summary>
+        <div class="three-col" id="billboard-slots"></div>
+      </details>
+
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="bb-prompt">✍️ Prompt / Slash Command Box</label>
+          <textarea id="bb-prompt" rows="3" placeholder="Type slash command or commercial prompt..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('bb-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('bb-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <div class="row-flex">
+            <div style="flex:2;">
+              <label class="field-label" for="bb-slash-select">⚡ Commercial Billboard Slash Command Select</label>
+              <select id="bb-slash-select"></select>
+            </div>
+            <button type="button" class="action-btn" style="flex:1;align-self:flex-end;" onclick="insertSelectedDesc('bb-slash-select', 'bb-prompt')">📥 Insert Slash Prompt</button>
+          </div>
+
+          <label class="field-label" for="bb-quality">🎬 Video Render Quality Grade</label>
+          <select id="bb-quality"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runBillboard()">🚀 Generate 6-Slot Multi-Asset Storyboard Video</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="showcase-box" style="min-height:220px;">
+            <label class="field-label">🖼️ 6-Slot Auto-Generated Storyboard / Billboard Grid Preview</label>
+            <div class="showcase-content" id="bb-grid-preview" style="min-height:170px;">Upload assets in slots above to preview grid</div>
+          </div>
+          <div class="showcase-box" style="min-height:220px;">
+            <label class="field-label">🎥 Generated Dynamic Motion Video Output</label>
+            <div class="showcase-content" id="bb-video-output" style="min-height:170px;">Generated storyboard motion output will appear here</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Cinematic Studio Tab -->
+    <div class="tab-pane" id="tab-cinematic">
+      <h3 class="glowing-header">🎥 Masterpiece High-Definition Cinematic Video Generator</h3>
+      <details class="glass-accordion" open>
+        <summary><span>📂 Multi-Reference Input Slots (3 Slots for Image-to-Video)</span><span>▼</span></summary>
+        <div class="three-col" id="cine-slots"></div>
+      </details>
+
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="cine-prompt">🎞 Cinematic Motion Description</label>
+          <textarea id="cine-prompt" rows="3" placeholder="Type any creative vision..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('cine-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('cine-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="cine-quality">🎬 Video Render Quality Grade</label>
+          <select id="cine-quality" style="margin-bottom:10px;"></select>
+
+          <label class="field-label" for="cine-aspect">📐 Select Video Aspect Ratio</label>
+          <select id="cine-aspect"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runMultiTask('cinematic_video', 'cine-prompt', ['cine-s1','cine-s2','cine-s3'], null, 'cine-quality', 'cine-aspect', 'cine-output', 1280, 720, 25)">🚀 Generate Cinematic Video</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="showcase-box" style="min-height:220px;">
+            <label class="field-label">🖼️ Auto-Generated Multi-Reference Grid Preview</label>
+            <div class="showcase-content" id="cine-grid-preview" style="min-height:170px;">Upload reference images above to preview grid</div>
+          </div>
+          <div class="showcase-box" style="min-height:220px;">
+            <label class="field-label">🎥 Generated Cinematic Video Output</label>
+            <div class="showcase-content" id="cine-output" style="min-height:170px;">Cinematic video output will appear here</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Image-to-Image Tab -->
+    <div class="tab-pane" id="tab-i2i">
+      <div class="two-col">
+        <div class="glass-panel">
+          <details class="glass-accordion" open>
+            <summary><span>📂 Multi-Reference Input Slots (3 Slots)</span><span>▼</span></summary>
+            <div class="three-col" id="i2i-slots"></div>
+          </details>
+
+          <label class="field-label" for="i2i-prompt">✍️ Transformation Prompt</label>
+          <textarea id="i2i-prompt" rows="2" placeholder="Describe how to modify the image..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('i2i-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('i2i-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="i2i-upscaler">🔍 Select AI Upscaler Engine</label>
+          <select id="i2i-upscaler"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runMultiTask('i2i', 'i2i-prompt', ['i2i-s1','i2i-s2','i2i-s3'], 'i2i-upscaler', null, null, 'i2i-output')">🔄 Transform Image</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">✨ Transformed Output</label>
+          <div class="showcase-content" id="i2i-output">Transformed image will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Image-to-Animation Tab -->
+    <div class="tab-pane" id="tab-anim">
+      <div class="two-col">
+        <div class="glass-panel">
+          <div id="anim-slot" style="margin-bottom:12px;"></div>
+
+          <label class="field-label" for="anim-prompt">✍️ Animation Motion Prompt</label>
+          <textarea id="anim-prompt" rows="2" placeholder="Describe the motion..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('anim-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('anim-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="anim-quality">🎬 Video Render Quality Grade</label>
+          <select id="anim-quality"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runSingleImageTask('animation', 'anim-prompt', 'anim-s1', null, 'anim-quality', 'anim-output', 25)">🎥 Generate Animation Video</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">🎞 Generated Animation Output</label>
+          <div class="showcase-content" id="anim-output">Generated animation will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Face Swapping & Consistency Tool Tab -->
+    <div class="tab-pane" id="tab-faceswap">
+      <h3 class="glowing-header">🎭 Face Swapping &amp; Character Consistency Tool</h3>
+      <div class="two-col">
+        <div class="glass-panel">
+          <div class="two-col" id="face-slots" style="margin-bottom:12px;"></div>
+
+          <label class="field-label" for="face-prompt">✍️ Custom Blending Prompt</label>
+          <textarea id="face-prompt" rows="2">Seamless face swap, realistic lighting and skin tone matching</textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('face-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('face-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="face-upscaler">🔍 Select AI Upscaler Engine</label>
+          <select id="face-upscaler"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runMultiTask('i2i', 'face-prompt', ['face-s1','face-s2'], 'face-upscaler', null, null, 'face-output')">🔄 Execute Face Swap &amp; Consistency</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">✨ Consistent Face Swapped Output</label>
+          <div class="showcase-content" id="face-output">Face swapped output will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. AI Background Remover & Eraser Tab -->
+    <div class="tab-pane" id="tab-bgeraser">
+      <h3 class="glowing-header">✂️ AI Background Remover &amp; Object Eraser (One-Click Clean Tool)</h3>
+      <div class="two-col">
+        <div class="glass-panel">
+          <div id="bg-slot" style="margin-bottom:12px;"></div>
+
+          <label class="field-label" for="bg-prompt">✍️ Custom Instructions (Optional)</label>
+          <textarea id="bg-prompt" rows="2">Remove background, transparent white isolated, high quality</textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('bg-prompt')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('bg-prompt')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="bg-upscaler">🔍 Select AI Upscaler Engine</label>
+          <select id="bg-upscaler"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runSingleImageTask('i2i', 'bg-prompt', 'bg-s1', 'bg-upscaler', null, 'bg-output', 20)">🚀 Remove Background Instantly</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">✨ Background Removed Output</label>
+          <div class="showcase-content" id="bg-output">Background removed output will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Preset Template Gallery Tab -->
+    <div class="tab-pane" id="tab-presets">
+      <h3 class="glowing-header">🎨 Visual Preset Template Gallery (35+ Presets with 3-Slot Reference Upload)</h3>
+      <details class="glass-accordion" open>
+        <summary><span>📂 Multi-Reference Input Slots for Presets (3 Slots)</span><span>▼</span></summary>
+        <div class="three-col" id="preset-slots"></div>
+      </details>
+
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="preset-select">🌟 Choose Visual Preset Style Card (35+ Styles)</label>
+          <select id="preset-select" style="margin-bottom:10px;" onchange="syncSelectToBox('preset-select', 'preset-preview-text')"></select>
+
+          <label class="field-label" for="preset-preview-text">📝 Selected Template Prompt Preview</label>
+          <textarea id="preset-preview-text" rows="3"></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('preset-preview-text')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('preset-preview-text')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <label class="field-label" for="preset-upscaler">🔍 Select AI Upscaler Engine</label>
+          <select id="preset-upscaler"></select>
+
+          <button type="button" class="action-btn primary-btn" onclick="runMultiTask('preset_flow', 'preset-preview-text', ['preset-s1','preset-s2','preset-s3'], 'preset-upscaler', null, null, 'preset-output')">🚀 Generate Image from Preset</button>
+        </div>
+
+        <div class="showcase-box">
+          <label class="field-label">✨ Preset Template Output Showcase</label>
+          <div class="showcase-content" id="preset-output">Preset output showcase will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Prompt Generator Tab -->
+    <div class="tab-pane" id="tab-prompts">
+      <h3 class="glowing-header">💡 AI-Powered Professional Prompt Builder &amp; Enhancer</h3>
+      <div class="two-col">
+        <div class="glass-panel">
+          <label class="field-label" for="pg-base-idea">🎯 Enter Your Basic Concept</label>
+          <textarea id="pg-base-idea" rows="3" placeholder="Enter your basic idea..."></textarea>
+
+          <div class="row-flex">
+            <div class="voice-box">
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙 Voice-to-Text Input</span>
+              <button type="button" class="action-btn" onclick="triggerVoiceMock('pg-base-idea')">● Record</button>
+            </div>
+            <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('pg-base-idea')">🌐 Auto-Translate to English Prompt</button>
+          </div>
+
+          <button type="button" class="action-btn primary-btn" onclick="runEnhancePrompt()">✨ Enhance &amp; Generate Advanced Prompt</button>
+        </div>
+
+        <div class="glass-panel">
+          <label class="field-label" for="pg-enhanced-output">📝 Optimized AI Prompt Result</label>
+          <textarea id="pg-enhanced-output" rows="6" readonly placeholder="Optimized prompt will appear here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. AI Chatbot Tab -->
+    <div class="tab-pane" id="tab-chatbot">
+      <h3 class="glowing-header">💬 AI Creative Assistant Live Chat</h3>
+      <div class="glass-panel">
+        <label class="field-label">💬 AI Creative Assistant Chat</label>
+        <div class="chat-window" id="chat-window">
+          <div class="chat-bubble chat-bot">Welcome to AccPixelForge! Ask me anything about image generation, presets, retouching, or cinematic animations.</div>
+        </div>
+
+        <div class="row-flex">
+          <input type="text" id="chat-msg-input" placeholder="Ask anything..." style="flex:4;" onkeydown="if(event.key==='Enter') sendChatMessage()" />
+          <button type="button" class="action-btn primary-btn" style="flex:1;margin-top:0;" onclick="sendChatMessage()">Send Message 🚀</button>
+        </div>
+
+        <div class="row-flex">
+          <div class="voice-box" style="flex:2;">
+            <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+            <button type="button" class="action-btn" onclick="triggerVoiceMock('chat-msg-input')">● Record</button>
+          </div>
+          <button type="button" class="action-btn" style="flex:3;" onclick="translateBox('chat-msg-input')">🌐 Auto-Translate to English Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const uploadedImages = {};
+    let aspectDimensionsMap = {};
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+
+    function createUploadSlot(containerId, slotId, labelText, onChangeCallback) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const slotDiv = document.createElement('div');
+      slotDiv.className = 'upload-slot';
+      slotDiv.innerHTML = `
+        <span class="slot-title">${labelText}</span>
+        <div class="upload-drop" id="drop-${slotId}">
+          <span class="upload-hint">📁 Click to Browse Image</span>
+        </div>
+        <input type="file" id="file-${slotId}" accept="image/*" style="display:none;" />
+        <button type="button" class="clear-slot-btn" id="clear-${slotId}" style="display:none;">✕ Remove</button>
+      `;
+      container.appendChild(slotDiv);
+
+      const dropEl = document.getElementById(`drop-${slotId}`);
+      const fileInput = document.getElementById(`file-${slotId}`);
+      const clearBtn = document.getElementById(`clear-${slotId}`);
+
+      dropEl.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedImages[slotId] = ev.target.result;
+          dropEl.innerHTML = `<img src="${ev.target.result}" alt="${labelText}" />`;
+          clearBtn.style.display = 'inline-block';
+          if (onChangeCallback) onChangeCallback();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      clearBtn.addEventListener('click', () => {
+        delete uploadedImages[slotId];
+        fileInput.value = '';
+        dropEl.innerHTML = `<span class="upload-hint">📁 Click to Browse Image</span>`;
+        clearBtn.style.display = 'none';
+        if (onChangeCallback) onChangeCallback();
+      });
+    }
+
+    function populateSelect(selectId, items, isObjectList = false) {
+      const sel = document.getElementById(selectId);
+      if (!sel || !items) return;
+      sel.innerHTML = '';
+      items.forEach((item, idx) => {
+        const opt = document.createElement('option');
+        if (isObjectList) {
+          opt.value = item.desc;
+          opt.textContent = item.label;
+        } else {
+          opt.value = item;
+          opt.textContent = item;
+        }
+        if (idx === 0) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function buildRadioGroup(containerId, name, items, onSelect) {
+      const box = document.getElementById(containerId);
+      if (!box || !items) return;
+      box.innerHTML = '';
+      items.forEach((item, idx) => {
+        const lbl = document.createElement('label');
+        lbl.className = 'radio-pill';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = name;
+        radio.value = item;
+        if (idx === 0) radio.checked = true;
+        radio.addEventListener('change', () => {
+          if (onSelect) onSelect(item);
+        });
+        lbl.appendChild(radio);
+        lbl.appendChild(document.createTextNode(' ' + item));
+        box.appendChild(lbl);
+      });
+    }
+
+    function getRadioValue(name, fallback = 'None') {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      return checked ? checked.value : fallback;
+    }
+
+    function syncSelectToBox(selectId, boxId) {
+      const sel = document.getElementById(selectId);
+      const box = document.getElementById(boxId);
+      if (sel && box) box.value = sel.value;
+    }
+
+    function insertSelectedDesc(selectId, boxId) {
+      syncSelectToBox(selectId, boxId);
+    }
+
+    async function triggerVoiceMock(targetBoxId) {
+      const res = await fetch('/api/transcribe', { method: 'POST' });
+      const data = await res.json();
+      const box = document.getElementById(targetBoxId);
+      if (box && data.text) box.value = data.text;
+    }
+
+    async function translateBox(targetBoxId) {
+      const box = document.getElementById(targetBoxId);
+      if (!box || !box.value.trim()) return;
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: box.value })
+      });
+      const data = await res.json();
+      if (data.text) box.value = data.text;
+    }
+
+    async function runEnhancePrompt() {
+      const baseBox = document.getElementById('pg-base-idea');
+      const outBox = document.getElementById('pg-enhanced-output');
+      if (!baseBox || !outBox) return;
+      const res = await fetch('/api/enhance-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: baseBox.value })
+      });
+      const data = await res.json();
+      outBox.value = data.text || '';
+    }
+
+    async function updateGridPreview(slotIds, previewId, gridType) {
+      const imgs = slotIds.map(id => uploadedImages[id]).filter(Boolean);
+      const previewEl = document.getElementById(previewId);
+      if (!previewEl) return;
+      if (imgs.length === 0) {
+        previewEl.innerHTML = 'Upload reference images above to preview grid';
+        return;
+      }
+      const res = await fetch('/api/grid-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: imgs, grid_type: gridType })
+      });
+      const data = await res.json();
+      if (data.image) {
+        previewEl.innerHTML = `<img src="${data.image}" alt="Grid Preview" />`;
+      }
+    }
+
+    function renderGenerationOutput(containerId, data) {
+      const box = document.getElementById(containerId);
+      if (!box) return;
+      if (data.ok && data.type === 'image') {
+        box.innerHTML = `<img src="${data.data}" alt="Generated Output" />`;
+      } else if (data.ok && data.type === 'video') {
+        box.innerHTML = `<video src="${data.data}" controls autoplay loop></video>`;
+      } else {
+        box.innerHTML = `<span style="color:#fda4af;">${data.error || 'Generation completed with no output.'}</span>`;
+      }
+    }
+
+    async function runT2I() {
+      const outBox = document.getElementById('t2i-output');
+      outBox.innerHTML = '⏳ Generating creative image...';
+      const payload = {
+        task: 't2i',
+        grid_mode: 'single',
+        prompt: document.getElementById('t2i-prompt').value,
+        width: parseInt(document.getElementById('t2i-width').value, 10),
+        height: parseInt(document.getElementById('t2i-height').value, 10),
+        model_name: document.getElementById('global-checkpoint').value,
+        lora_name: document.getElementById('global-lora').value,
+        lora_strength: parseFloat(document.getElementById('global-lora-weight').value),
+        upscaler: document.getElementById('t2i-upscaler').value,
+        style_preset: getRadioValue('t2i-style', 'None'),
+        aspect_ratio_label: getRadioValue('t2i-aspect', '1:1 (1024x1024 Square)')
+      };
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      renderGenerationOutput('t2i-output', await res.json());
+    }
+
+    async function runMultiTask(task, promptId, slotIds, upscalerId, qualityId, aspectId, outputId, width = 1024, height = 1024, steps = 30) {
+      const outBox = document.getElementById(outputId);
+      outBox.innerHTML = '⏳ Processing request...';
+      const imgs = slotIds.map(id => uploadedImages[id]).filter(Boolean);
+      const payload = {
+        task,
+        grid_mode: 'dynamic',
+        prompt: document.getElementById(promptId).value,
+        images: imgs,
+        width,
+        height,
+        steps,
+        model_name: document.getElementById('global-checkpoint').value,
+        lora_name: document.getElementById('global-lora').value,
+        lora_strength: parseFloat(document.getElementById('global-lora-weight').value),
+        upscaler: upscalerId ? document.getElementById(upscalerId).value : 'None',
+        quality_grade: qualityId ? document.getElementById(qualityId).value : null,
+        aspect_ratio_label: aspectId ? document.getElementById(aspectId).value : null
+      };
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      renderGenerationOutput(outputId, await res.json());
+    }
+
+    async function runSingleImageTask(task, promptId, slotId, upscalerId, qualityId, outputId, steps = 25) {
+      const outBox = document.getElementById(outputId);
+      outBox.innerHTML = '⏳ Processing request...';
+      const img = uploadedImages[slotId] ? [uploadedImages[slotId]] : [];
+      const payload = {
+        task,
+        grid_mode: 'single',
+        prompt: document.getElementById(promptId).value,
+        images: img,
+        steps,
+        model_name: document.getElementById('global-checkpoint').value,
+        lora_name: document.getElementById('global-lora').value,
+        lora_strength: parseFloat(document.getElementById('global-lora-weight').value),
+        upscaler: upscalerId ? document.getElementById(upscalerId).value : 'None',
+        quality_grade: qualityId ? document.getElementById(qualityId).value : null
+      };
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      renderGenerationOutput(outputId, await res.json());
+    }
+
+    async function runBillboard() {
+      const outBox = document.getElementById('bb-video-output');
+      outBox.innerHTML = '⏳ Generating 6-slot storyboard motion output...';
+      const imgs = ['bb-s1','bb-s2','bb-s3','bb-s4','bb-s5','bb-s6'].map(id => uploadedImages[id]).filter(Boolean);
+      const payload = {
+        task: 'cgi_billboard',
+        grid_mode: 'storyboard',
+        prompt: document.getElementById('bb-prompt').value,
+        images: imgs,
+        steps: 25,
+        model_name: document.getElementById('global-checkpoint').value,
+        lora_name: document.getElementById('global-lora').value,
+        lora_strength: parseFloat(document.getElementById('global-lora-weight').value),
+        quality_grade: document.getElementById('bb-quality').value
+      };
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      renderGenerationOutput('bb-video-output', await res.json());
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-msg-input');
+      const win = document.getElementById('chat-window');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'chat-bubble chat-user';
+      userDiv.textContent = msg;
+      win.appendChild(userDiv);
+      input.value = '';
+      win.scrollTop = win.scrollHeight;
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      const botDiv = document.createElement('div');
+      botDiv.className = 'chat-bubble chat-bot';
+      botDiv.textContent = data.reply || '';
+      win.appendChild(botDiv);
+      win.scrollTop = win.scrollHeight;
+    }
+
+    async function initStudio() {
+      // Build upload slots
+      createUploadSlot('retouch-slots', 'retouch-s1', '🖼️ Slot 1: Primary Image / Subject');
+      createUploadSlot('retouch-slots', 'retouch-s2', '🖼️ Slot 2: Reference Image / Background');
+      createUploadSlot('retouch-slots', 'retouch-s3', '🖼️ Slot 3: Additional Ref / Asset');
+
+      createUploadSlot('flow-slots', 'flow-s1', '🖼️ Slot 1: Primary Subject / Photo');
+      createUploadSlot('flow-slots', 'flow-s2', '🖼️ Slot 2: Background / Secondary Reference');
+      createUploadSlot('flow-slots', 'flow-s3', '🖼️ Slot 3: Accessory / Extra Reference');
+
+      const updateBB = () => updateGridPreview(['bb-s1','bb-s2','bb-s3','bb-s4','bb-s5','bb-s6'], 'bb-grid-preview', 'storyboard');
+      createUploadSlot('billboard-slots', 'bb-s1', '🛍️ Slot 1: Primary Product / Character', updateBB);
+      createUploadSlot('billboard-slots', 'bb-s2', '🎁 Slot 2: Secondary Product / Subject', updateBB);
+      createUploadSlot('billboard-slots', 'bb-s3', '🌇 Slot 3: Primary Background / Location', updateBB);
+      createUploadSlot('billboard-slots', 'bb-s4', '🌄 Slot 4: Secondary Environment / Skybox', updateBB);
+      createUploadSlot('billboard-slots', 'bb-s5', '🕶️ Slot 5: Primary Prop / Outfit', updateBB);
+      createUploadSlot('billboard-slots', 'bb-s6', '👜 Slot 6: Secondary Prop / Accessory', updateBB);
+
+      const updateCine = () => updateGridPreview(['cine-s1','cine-s2','cine-s3'], 'cine-grid-preview', 'dynamic');
+      createUploadSlot('cine-slots', 'cine-s1', '📥 Slot 1: Primary Image / Subject', updateCine);
+      createUploadSlot('cine-slots', 'cine-s2', '📥 Slot 2: Reference Image / Background', updateCine);
+      createUploadSlot('cine-slots', 'cine-s3', '📥 Slot 3: Additional Ref / Asset', updateCine);
+
+      createUploadSlot('i2i-slots', 'i2i-s1', '📥 Slot 1: Primary Input Image');
+      createUploadSlot('i2i-slots', 'i2i-s2', '📥 Slot 2: Secondary Ref Image');
+      createUploadSlot('i2i-slots', 'i2i-s3', '📥 Slot 3: Additional Ref Image');
+
+      createUploadSlot('anim-slot', 'anim-s1', '📥 Upload Static Image for Animation');
+
+      createUploadSlot('face-slots', 'face-s1', '👤 Source Face / Character Reference');
+      createUploadSlot('face-slots', 'face-s2', '🖼️ Target Portrait / Scene Image');
+
+      createUploadSlot('bg-slot', 'bg-s1', '📥 Upload Image to Remove Background');
+
+      createUploadSlot('preset-slots', 'preset-s1', '🖼️ Slot 1: Primary Subject / Photo');
+      createUploadSlot('preset-slots', 'preset-s2', '🖼️ Slot 2: Background / Reference');
+      createUploadSlot('preset-slots', 'preset-s3', '🖼️ Slot 3: Accessory / Extra Asset');
+
+      try {
+        const res = await fetch('/api/config');
+        const cfg = await res.json();
+
+        // Background, Logo, Favicon
+        if (cfg.bg_b64) {
+          document.documentElement.style.backgroundImage = `url("data:image/png;base64,${cfg.bg_b64}")`;
+          document.body.style.backgroundImage = `url("data:image/png;base64,${cfg.bg_b64}")`;
+        }
+        if (cfg.logo_b64) {
+          const wrap = document.getElementById('brand-logo-wrap');
+          wrap.outerHTML = `<img src="data:image/png;base64,${cfg.logo_b64}" alt="AccPixelForge Logo" />`;
+        }
+        if (cfg.favicon_b64) {
+          document.getElementById('dynamic-favicon').href = `data:image/png;base64,${cfg.favicon_b64}`;
+        }
+
+        // Dropdowns
+        populateSelect('global-checkpoint', cfg.checkpoints);
+        populateSelect('global-lora', cfg.loras);
+
+        ['t2i-upscaler', 'retouch-upscaler', 'i2i-upscaler', 'face-upscaler', 'bg-upscaler', 'preset-upscaler'].forEach(id => {
+          populateSelect(id, cfg.upscalers);
+        });
+
+        ['flow-quality', 'bb-quality', 'cine-quality', 'anim-quality'].forEach(id => {
+          populateSelect(id, cfg.video_qualities);
+        });
+
+        populateSelect('cine-aspect', cfg.video_aspect_ratios);
+        populateSelect('retouch-slash-select', cfg.quick_retouch, true);
+        populateSelect('flow-master-select', cfg.master_prompts, true);
+        populateSelect('bb-slash-select', cfg.cgi_slash_commands, true);
+        populateSelect('preset-select', cfg.presets, true);
+
+        syncSelectToBox('flow-master-select', 'flow-desc-box');
+        syncSelectToBox('preset-select', 'preset-preview-text');
+
+        // Radios
+        aspectDimensionsMap = cfg.aspect_ratio_dimensions || {};
+        buildRadioGroup('t2i-style-group', 't2i-style', cfg.style_presets);
+        buildRadioGroup('t2i-aspect-group', 't2i-aspect', cfg.aspect_ratios, (selectedRatio) => {
+          const dims = aspectDimensionsMap[selectedRatio] || [1024, 1024];
+          document.getElementById('t2i-width').value = dims[0];
+          document.getElementById('t2i-w-val').textContent = dims[0];
+          document.getElementById('t2i-height').value = dims[1];
+          document.getElementById('t2i-h-val').textContent = dims[1];
+        });
+      } catch (err) {
+        console.error('Failed to load studio config:', err);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', initStudio);
+  </script>
+</body>
+</html>
