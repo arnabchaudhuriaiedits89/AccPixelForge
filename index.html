@@ -37,7 +37,7 @@
       display: flex;
       align-items: center;
       padding: 8px 15px;
-      background: rgba(5, 2, 20, 0.25);
+      background: transparent;
       border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 12px;
       margin-bottom: 12px;
@@ -59,7 +59,7 @@
       font-size: 16px;
       font-weight: 700;
       color: #38bdf8;
-      text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 10px rgba(56, 189, 248, 0.8);
     }
 
     /* Global Model Bar */
@@ -82,6 +82,9 @@
       border-radius: 14px;
       padding: 12px 14px;
       color: #ffffff;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
     }
 
     label.field-label {
@@ -90,23 +93,24 @@
       font-weight: 700;
       font-size: 13px;
       margin-bottom: 6px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
     }
 
     /* Tabs Navigation */
     .tab-nav {
       display: flex;
       flex-wrap: nowrap;
-      gap: 4px;
+      gap: 3px;
       border-bottom: 2px solid rgba(56, 189, 248, 0.8);
-      padding: 6px;
+      padding-bottom: 6px;
+      padding-top: 2px;
       justify-content: space-between;
       width: 100%;
       overflow-x: auto;
-      background: rgba(5, 2, 20, 0.45);
+      background: transparent;
       border-radius: 12px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
       margin-bottom: 14px;
     }
 
@@ -117,12 +121,12 @@
       color: #ffffff;
       font-family: 'Poppins', sans-serif;
       font-weight: 700;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 8px rgba(56, 189, 248, 0.6);
-      background: rgba(10, 5, 30, 0.55);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(56, 189, 248, 0.6);
+      background: transparent;
       border: 1px solid rgba(56, 189, 248, 0.5);
       border-radius: 8px;
-      padding: 6px 8px;
-      font-size: 11.5px;
+      padding: 6px 6px;
+      font-size: 11px;
       min-height: 38px;
       display: inline-flex;
       align-items: center;
@@ -133,17 +137,17 @@
     }
 
     .tab-btn:hover {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(219, 39, 119, 0.9) 100%);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85) 0%, rgba(219, 39, 119, 0.85) 100%);
       border-color: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
     }
 
     .tab-btn.active {
       color: #ffffff;
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%);
       border-color: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.85);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
     }
 
     /* Tab Panes */
@@ -153,6 +157,8 @@
       border-radius: 14px;
       padding: 16px;
       background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     .tab-pane.active {
@@ -164,7 +170,7 @@
       font-weight: 700;
       font-size: 18px;
       margin: 0 0 14px 0;
-      text-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 10px rgba(56, 189, 248, 0.8);
     }
 
     .two-col {
@@ -201,22 +207,29 @@
       flex-wrap: wrap;
     }
 
-    /* Inputs, Textareas, Selects */
+    /* Transparent Crisp Inputs, Textareas, Selects */
     input[type="text"],
     input[type="number"],
     textarea,
     select {
       width: 100%;
-      background: rgba(6, 14, 34, 0.55);
-      color: #7dd3fc;
+      background: transparent;
+      color: #e0f2fe;
       border: 1px solid rgba(56, 189, 248, 0.52);
       border-radius: 10px;
       padding: 10px 12px;
       font-family: 'Poppins', sans-serif;
       font-size: 13px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
       outline: none;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: rgba(224, 242, 254, 0.72);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
     }
 
     select option {
@@ -244,13 +257,14 @@
     .slider-val {
       min-width: 48px;
       text-align: center;
-      background: rgba(6, 14, 34, 0.75);
+      background: transparent;
       border: 1px solid rgba(56, 189, 248, 0.5);
       border-radius: 8px;
       padding: 4px 8px;
       font-size: 12px;
       color: #7dd3fc;
-      font-weight: 600;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
     }
 
     /* Radio Pill Groups */
@@ -267,11 +281,12 @@
       gap: 6px;
       cursor: pointer;
       color: #ffffff;
-      background: rgba(10, 15, 35, 0.72);
+      background: transparent;
       border: 1px solid rgba(56, 189, 248, 0.45);
       border-radius: 8px;
       padding: 6px 10px;
       font-size: 12px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
       user-select: none;
       transition: all 0.2s ease;
     }
@@ -285,14 +300,14 @@
     }
 
     .radio-pill:has(input:checked) {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85) 0%, rgba(124, 58, 237, 0.85) 100%);
       border-color: #38bdf8;
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
     }
 
     /* Buttons */
     .action-btn {
-      background: rgba(5, 2, 20, 0.55);
+      background: transparent;
       color: #ffffff;
       border: 1px solid rgba(56, 189, 248, 0.55);
       border-radius: 10px;
@@ -300,6 +315,7 @@
       font-family: 'Poppins', sans-serif;
       font-size: 13px;
       font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
       cursor: pointer;
       transition: all 0.2s ease;
       display: inline-flex;
@@ -309,9 +325,9 @@
     }
 
     .action-btn:hover {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.9) 0%, rgba(219, 39, 119, 0.9) 100%);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85) 0%, rgba(219, 39, 119, 0.85) 100%);
       border-color: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.85);
     }
 
     .primary-btn {
@@ -320,7 +336,7 @@
       padding: 12px 16px;
       font-size: 14px;
       font-weight: 700;
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.85) 0%, rgba(124, 58, 237, 0.85) 100%);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.8) 0%, rgba(124, 58, 237, 0.8) 100%);
       border-color: #38bdf8;
     }
 
@@ -330,7 +346,9 @@
       border-radius: 14px;
       padding: 10px 14px;
       margin-bottom: 12px;
-      background: rgba(5, 2, 20, 0.25);
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     details.glass-accordion summary {
@@ -338,6 +356,7 @@
       font-weight: 700;
       color: #38bdf8;
       font-size: 13.5px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
       list-style: none;
       display: flex;
       justify-content: space-between;
@@ -354,12 +373,12 @@
       border-bottom: 1px solid rgba(56, 189, 248, 0.25);
     }
 
-    /* Image Upload Slots & Output Showcase */
+    /* Transparent Image Upload Slots & Output Showcase */
     .upload-slot {
       border: 1px dashed rgba(56, 189, 248, 0.55);
       border-radius: 12px;
       padding: 10px;
-      background: rgba(5, 2, 20, 0.35);
+      background: transparent;
       text-align: center;
       position: relative;
     }
@@ -368,6 +387,7 @@
       font-size: 12px;
       font-weight: 600;
       color: #7dd3fc;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
       margin-bottom: 8px;
       display: block;
     }
@@ -381,7 +401,7 @@
       cursor: pointer;
       border-radius: 8px;
       overflow: hidden;
-      background: rgba(6, 14, 34, 0.45);
+      background: transparent;
       padding: 8px;
     }
 
@@ -394,14 +414,15 @@
 
     .upload-hint {
       font-size: 12px;
-      color: #94a3b8;
+      color: #e2e8f0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
     }
 
     .clear-slot-btn {
       margin-top: 6px;
       padding: 4px 10px;
       font-size: 11px;
-      background: rgba(185, 28, 28, 0.55);
+      background: rgba(185, 28, 28, 0.75);
       border: 1px solid rgba(248, 113, 113, 0.6);
       color: #fff;
       border-radius: 6px;
@@ -412,10 +433,12 @@
       border: 1px solid rgba(56, 189, 248, 0.45);
       border-radius: 14px;
       padding: 12px;
-      background: rgba(5, 2, 20, 0.35);
+      background: transparent;
       min-height: 320px;
       display: flex;
       flex-direction: column;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     .showcase-content {
@@ -425,11 +448,12 @@
       justify-content: center;
       min-height: 270px;
       border-radius: 10px;
-      background: rgba(6, 14, 34, 0.45);
+      background: transparent;
       overflow: hidden;
       text-align: center;
       padding: 10px;
-      color: #94a3b8;
+      color: #e2e8f0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
       font-size: 13px;
     }
 
@@ -445,7 +469,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(6, 14, 34, 0.5);
+      background: transparent;
       border: 1px solid rgba(56, 189, 248, 0.45);
       border-radius: 10px;
       padding: 6px 10px;
@@ -459,7 +483,7 @@
       border: 1px solid rgba(56, 189, 248, 0.45);
       border-radius: 12px;
       padding: 14px;
-      background: rgba(5, 2, 20, 0.45);
+      background: transparent;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -472,6 +496,7 @@
       border-radius: 12px;
       font-size: 13px;
       line-height: 1.5;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
     }
 
     .chat-user {
@@ -483,7 +508,7 @@
 
     .chat-bot {
       align-self: flex-start;
-      background: rgba(10, 20, 45, 0.85);
+      background: rgba(8, 18, 42, 0.72);
       border: 1px solid rgba(56, 189, 248, 0.45);
       color: #e0f2fe;
     }
@@ -541,7 +566,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('t2i-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('t2i-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -600,7 +625,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('retouch-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('retouch-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -645,7 +670,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('flow-desc-box')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('flow-desc-box')">🌐 Auto-Translate to English Prompt</button>
@@ -679,7 +704,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('bb-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('bb-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -727,7 +752,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('cine-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('cine-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -769,7 +794,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('i2i-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('i2i-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -799,7 +824,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('anim-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('anim-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -830,7 +855,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('face-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('face-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -861,7 +886,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('bg-prompt')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('bg-prompt')">🌐 Auto-Translate to English Prompt</button>
@@ -898,7 +923,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('preset-preview-text')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('preset-preview-text')">🌐 Auto-Translate to English Prompt</button>
@@ -927,7 +952,7 @@
 
           <div class="row-flex">
             <div class="voice-box">
-              <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙 Voice-to-Text Input</span>
+              <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙 Voice-to-Text Input</span>
               <button type="button" class="action-btn" onclick="triggerVoiceMock('pg-base-idea')">● Record</button>
             </div>
             <button type="button" class="action-btn" style="flex:1.4;" onclick="translateBox('pg-base-idea')">🌐 Auto-Translate to English Prompt</button>
@@ -959,7 +984,7 @@
 
         <div class="row-flex">
           <div class="voice-box" style="flex:2;">
-            <span style="font-size:12px;color:#38bdf8;font-weight:600;">🎙️ Voice-to-Text Input</span>
+            <span style="font-size:12px;color:#38bdf8;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.95);">🎙️ Voice-to-Text Input</span>
             <button type="button" class="action-btn" onclick="triggerVoiceMock('chat-msg-input')">● Record</button>
           </div>
           <button type="button" class="action-btn" style="flex:3;" onclick="translateBox('chat-msg-input')">🌐 Auto-Translate to English Prompt</button>
@@ -972,7 +997,6 @@
     const uploadedImages = {};
     let aspectDimensionsMap = {};
 
-    // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1269,7 +1293,6 @@
     }
 
     async function initStudio() {
-      // Build upload slots
       createUploadSlot('retouch-slots', 'retouch-s1', '🖼️ Slot 1: Primary Image / Subject');
       createUploadSlot('retouch-slots', 'retouch-s2', '🖼️ Slot 2: Reference Image / Background');
       createUploadSlot('retouch-slots', 'retouch-s3', '🖼️ Slot 3: Additional Ref / Asset');
@@ -1310,7 +1333,6 @@
         const res = await fetch('/api/config');
         const cfg = await res.json();
 
-        // Background, Logo, Favicon
         if (cfg.bg_b64) {
           document.documentElement.style.backgroundImage = `url("data:image/png;base64,${cfg.bg_b64}")`;
           document.body.style.backgroundImage = `url("data:image/png;base64,${cfg.bg_b64}")`;
@@ -1323,7 +1345,6 @@
           document.getElementById('dynamic-favicon').href = `data:image/png;base64,${cfg.favicon_b64}`;
         }
 
-        // Dropdowns
         populateSelect('global-checkpoint', cfg.checkpoints);
         populateSelect('global-lora', cfg.loras);
 
@@ -1344,7 +1365,6 @@
         syncSelectToBox('flow-master-select', 'flow-desc-box');
         syncSelectToBox('preset-select', 'preset-preview-text');
 
-        // Radios
         aspectDimensionsMap = cfg.aspect_ratio_dimensions || {};
         buildRadioGroup('t2i-style-group', 't2i-style', cfg.style_presets);
         buildRadioGroup('t2i-aspect-group', 't2i-aspect', cfg.aspect_ratios, (selectedRatio) => {
